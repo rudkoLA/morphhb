@@ -73,7 +73,7 @@ export const bookNamesMap = {
   Hag: "Haggai",
   Zech: "Zechariah",
   Mal: "Malachi",
-  Ps: "Psalm",
+  Ps: "Psalms",
   Prov: "Proverbs",
   Job: "Job",
   Song: "Song of Songs",
