@@ -2,19 +2,18 @@ import React from "react";
 import { throttle } from "lodash";
 import { useEffect, useState } from "react";
 import "./App.css";
-import { fetchBook, fetchStrongsNumbers } from "./utils/api";
+import {
+  fetchBook,
+  createWord,
+  updateWord,
+  fetchWord,
+  IWord,
+} from "./utils/api";
 import { TBookName, bookList, bookNamesMap, books } from "./utils/books";
 import { generateNumbers, later } from "./utils/common";
-
-interface IStrongsNumberDict {
-  top: string;
-  def: string;
-}
+import DictionaryDialog from "./components/Dialog";
 
 function App() {
-  const [strongsData, setStrongNumbersData] = useState<
-    IStrongsNumberDict[] | null
-  >(null);
   const [startingBook, startingChapter, startingVerse] = window.location.hash
     .replace("#", "")
     .split("/");
@@ -23,7 +22,7 @@ function App() {
   const [book, setBook] = useState<TBookName>(
     startingBook ? (startingBook as TBookName) : "Gen"
   );
-  const [selectedWordCode, setSelectedWordCode] = useState<string | null>(null); // [book, chapter, verse, word
+  const [selectedWord, setSelectedWord] = useState<IWord | null>(null); // [book, chapter, verse, word
   const setChapter = (chapter: number) => {
     window.location.hash = `#${book}/${chapter}/0`;
     // scroll to correct chapter
@@ -61,12 +60,6 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookName]);
 
-  useEffect(() => {
-    fetchStrongsNumbers().then((data: IStrongsNumberDict[]) => {
-      setStrongNumbersData(data);
-    });
-  }, []);
-
   const chapterCount = +books[book].split(" ")[0];
 
   const handleBookChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -82,14 +75,7 @@ function App() {
     asyncFn();
   };
 
-  const strongsNumberByCode = strongsData
-    ? strongsData.find((item) => {
-        return item.top === `H${selectedWordCode}`;
-      })
-    : null;
-
-  const showStrongNumberDialog =
-    !!selectedWordCode && !!strongsNumberByCode?.def;
+  const showStrongNumberDialog = !!selectedWord;
 
   useEffect(() => {
     if (showStrongNumberDialog) {
@@ -125,6 +111,19 @@ function App() {
       });
     }
   }, 2000);
+
+  const handleClose = () => {
+    setSelectedWord(null);
+  };
+
+  const handleSubmit = (word: IWord) => {
+    fetchWord(word.id).then((data) => {
+      console.log("!!!!!!!");
+      data.id ? updateWord(word) : createWord(word);
+    });
+
+    setSelectedWord(null);
+  };
 
   return (
     <div className="wrapper">
@@ -177,7 +176,19 @@ function App() {
                   {verse.map((word, k) => (
                     <span key={"word-" + j + book + k}>
                       {" "}
-                      <Word data={word} onClick={setSelectedWordCode} />
+                      <Word
+                        data={word}
+                        onClick={(e) => {
+                          console.log(e, book, i, j, k);
+                          setSelectedWord({
+                            id: e,
+                            definition: "",
+                            book,
+                            chapter: i + 1,
+                            verse: j + 1,
+                          } as IWord);
+                        }}
+                      />
                     </span>
                   ))}
                 </span>
@@ -189,36 +200,25 @@ function App() {
 
       {showStrongNumberDialog && (
         <>
-          <div className="popoverDialog">
-            <span className="close" onClick={() => setSelectedWordCode(null)}>
-              Close
-            </span>
-            <span className="body">
-              <span
-                dangerouslySetInnerHTML={{
-                  __html: strongsNumberByCode.def,
-                }}
-              ></span>
-            </span>
-          </div>
-          <div
-            className="popoverOverlay"
-            onClick={() => setSelectedWordCode(null)}
-          ></div>
+          <DictionaryDialog
+            handleClose={handleClose}
+            handleSubmit={handleSubmit}
+            word={selectedWord}
+          />
         </>
       )}
     </div>
   );
 }
-interface IWord {
+interface IWordProps {
   data: string[];
   onClick: (word: string) => void;
 }
 
-const Word: React.FC<IWord> = ({ data, onClick }) => {
+const Word: React.FC<IWordProps> = ({ data, onClick }) => {
   const [word, code, meaning] = data;
   const handleClick = () => {
-    onClick(code);
+    onClick(word);
   };
 
   if (word.includes("/")) {

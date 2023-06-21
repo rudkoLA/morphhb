@@ -157,3 +157,8 @@ select {
   opacity: 0.5;
 }
 
+.dialogContent {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+} 
