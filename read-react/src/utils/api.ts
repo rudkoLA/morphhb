@@ -2,6 +2,8 @@ const SERVER_URL = "/";
 
 const SERVER_URL_DEV = "http://localhost:3004/";
 
+import { TBookName } from "./books";
+
 export interface IWord {
   id: string;
   definition: string;
@@ -28,6 +30,7 @@ export const getRequest = (url: string, o = {}) => {
   return req;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const postRequest = (url: string, data: any) => {
   const options = {
     method: "POST",
@@ -39,6 +42,7 @@ export const postRequest = (url: string, data: any) => {
   return req;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const putRequest = (url: string, data: any) => {
   const options = {
     method: "PUT",
@@ -67,15 +71,19 @@ export const fetchBook = (book: string) => {
   return req;
 };
 
-export const fetchStrongsNumbers = () => {
-  // source: https://github.com/eliranwong/unabridged-BDB-Hebrew-lexicon/tree/master
-  const req = getRequest(SERVER_URL + "data\\DictBDB.json");
+export const fetchWord = (id: string) => {
+  const req = getRequest(`${SERVER_URL_DEV}words/${id}`);
 
   return req;
 };
 
-export const fetchWord = (id: string) => {
-  const req = getRequest(`${SERVER_URL_DEV}words/${id}`);
+export const fetchWordsByBooksAndChapters = (
+  book: TBookName,
+  chapter: number
+) => {
+  const req = getRequest(
+    `${SERVER_URL_DEV}words?book=${book}&chapter=${chapter}`
+  );
 
   return req;
 };

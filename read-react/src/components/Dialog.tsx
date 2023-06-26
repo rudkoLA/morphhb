@@ -63,6 +63,7 @@ export default function DictionaryDialog({
   word,
 }: IDialog) {
   const [term, setTerm] = React.useState(word.id);
+  const [isSaving, setIsSaving] = React.useState(false);
   const [definition, setDefinition] = React.useState(word.definition);
 
   React.useEffect(() => {
@@ -108,10 +109,12 @@ export default function DictionaryDialog({
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
           <Button
+            disabled={isSaving}
             variant="contained"
-            onClick={() =>
-              handleSubmit({ ...word, id: term, definition } as IWord)
-            }
+            onClick={() => {
+              setIsSaving(true);
+              handleSubmit({ ...word, id: term, definition } as IWord);
+            }}
           >
             Save
           </Button>

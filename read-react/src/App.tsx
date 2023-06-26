@@ -3,15 +3,18 @@ import { throttle } from "lodash";
 import { useEffect, useState } from "react";
 import "./App.css";
 import {
+  IWord,
   fetchBook,
   createWord,
   updateWord,
   fetchWord,
-  IWord,
+  fetchWordsByBooksAndChapters,
 } from "./utils/api";
+
 import { TBookName, bookList, bookNamesMap, books } from "./utils/books";
 import { generateNumbers, later } from "./utils/common";
 import DictionaryDialog from "./components/Dialog";
+import Button from "@mui/material/Button";
 
 function App() {
   const [startingBook, startingChapter, startingVerse] = window.location.hash
@@ -22,8 +25,9 @@ function App() {
   const [book, setBook] = useState<TBookName>(
     startingBook ? (startingBook as TBookName) : "Gen"
   );
+  const [chapter, setChapter] = useState<number>(+startingChapter || 1);
   const [selectedWord, setSelectedWord] = useState<IWord | null>(null); // [book, chapter, verse, word
-  const setChapter = (chapter: number) => {
+  const handleChapterChange = (chapter: number) => {
     window.location.hash = `#${book}/${chapter}/0`;
     // scroll to correct chapter
     const element = document.getElementById(`${book}-${chapter}-0`);
@@ -60,6 +64,14 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookName]);
 
+  useEffect(() => {
+    fetchWordsByBooksAndChapters(book, +chapter).then((words) => {
+      setWords(words);
+    });
+  }, [book, chapter, selectedWord]);
+
+  const [words, setWords] = useState<IWord[]>([]);
+
   const chapterCount = +books[book].split(" ")[0];
 
   const handleBookChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -69,21 +81,11 @@ function App() {
 
       setLoading(true);
       setBook(bookName);
-      setChapter(1);
+      handleChapterChange(1);
     };
 
     asyncFn();
   };
-
-  const showStrongNumberDialog = !!selectedWord;
-
-  useEffect(() => {
-    if (showStrongNumberDialog) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
-  }, [showStrongNumberDialog]);
 
   const handleScroll = throttle((): void => {
     let done = false;
@@ -98,6 +100,7 @@ function App() {
               window.location.hash = `#${book}/${i + 1}/${j + 1}`;
               done = true;
 
+              setChapter(i + 1);
               // update chapter selector
               const chapterSelector = document.getElementById(
                 "chapterSelector"
@@ -116,12 +119,14 @@ function App() {
     setSelectedWord(null);
   };
 
-  const handleSubmit = (word: IWord) => {
-    fetchWord(word.id).then((data) => {
-      console.log("!!!!!!!");
-      data.id ? updateWord(word) : createWord(word);
-    });
+  const handleSubmit = async (word: IWord) => {
+    const data = await fetchWord(word.id);
 
+    if (data.id) {
+      await updateWord(word);
+    } else {
+      await createWord(word);
+    }
     setSelectedWord(null);
   };
 
@@ -135,7 +140,9 @@ function App() {
             defaultValue={startingBook ? startingBook : "Gen"}
           >
             {bookList.map(([key, name]) => (
-              <option value={key}>{name}</option>
+              <option key={key} value={key}>
+                {name}
+              </option>
             ))}
           </select>
         </div>
@@ -143,15 +150,19 @@ function App() {
         <div className="selectorWrapper">
           <label>Chapters</label>
           <select
-            onChange={(e) => setChapter(+e.target.value)}
+            onChange={(e) => handleChapterChange(+e.target.value)}
             defaultValue={startingChapter ? startingChapter : 1}
             id="chapterSelector"
           >
             {generateNumbers(chapterCount).map((num) => (
-              <option>{num}</option>
+              <option key={num}>{num}</option>
             ))}
           </select>
         </div>
+
+        <Button variant="contained" className="wordsButton">
+          Words: {words.length}
+        </Button>
       </div>
       <hr />
 
@@ -198,7 +209,7 @@ function App() {
         )}
       </div>
 
-      {showStrongNumberDialog && (
+      {selectedWord && (
         <>
           <DictionaryDialog
             handleClose={handleClose}

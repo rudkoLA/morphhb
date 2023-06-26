@@ -58,7 +58,7 @@
     },
     {
       "id": "בְּ",
-      "definition": "f",
+      "definition": "asdfasdffasdfasdf",
       "book": "Gen",
       "chapter": 1,
       "verse": 1
@@ -76,6 +76,103 @@
       "book": "Gen",
       "chapter": 1,
       "verse": 17
+    },
+    {
+      "id": "אֶת",
+      "definition": "asdfasdf",
+      "book": "Gen",
+      "chapter": 1,
+      "verse": 7
+    },
+    {
+      "id": "רָקִ֔יעַ",
+      "definition": "asdasdf",
+      "book": "Gen",
+      "chapter": 1,
+      "verse": 7
+    },
+    {
+      "id": "אָדָ֥ם",
+      "definition": "hhh",
+      "book": "1Chr",
+      "chapter": 1,
+      "verse": 1
+    },
+    {
+      "id": "שֵׁ֖ת",
+      "definition": "hhhh",
+      "book": "1Chr",
+      "chapter": 1,
+      "verse": 1
+    },
+    {
+      "id": "אֱנֽוֹשׁh",
+      "definition": "hhhhhh",
+      "book": "1Chr",
+      "chapter": 1,
+      "verse": 1
+    },
+    {
+      "id": "יָֽפֶת",
+      "definition": "n",
+      "book": "1Chr",
+      "chapter": 1,
+      "verse": 4
+    },
+    {
+      "id": "בְנֵ֖י",
+      "definition": "hjhjhjhj",
+      "book": "1Chr",
+      "chapter": 1,
+      "verse": 6
+    },
+    {
+      "id": "אַשְׁכֲּנַ֥ז",
+      "definition": "nnnnnnn",
+      "book": "1Chr",
+      "chapter": 1,
+      "verse": 6
+    },
+    {
+      "id": "בְנֵ֥י",
+      "definition": "nbmbmnb",
+      "book": "1Chr",
+      "chapter": 1,
+      "verse": 7
+    },
+    {
+      "id": "כְנָֽעַן",
+      "definition": "bnnbnb",
+      "book": "1Chr",
+      "chapter": 1,
+      "verse": 8
+    },
+    {
+      "id": "תִירָֽס",
+      "definition": "adfsasda",
+      "book": "1Chr",
+      "chapter": 1,
+      "verse": 5
+    },
+    {
+      "id": "אֱנֽוֹשׁ",
+      "book": "1Chr",
+      "chapter": 1,
+      "verse": 1
+    },
+    {
+      "id": "מַהֲלַלְאֵ֖ל",
+      "definition": "bbbbb",
+      "book": "1Chr",
+      "chapter": 1,
+      "verse": 2
+    },
+    {
+      "id": "רַעְמָ֖א",
+      "definition": "nnnnn",
+      "book": "1Chr",
+      "chapter": 1,
+      "verse": 9
     }
   ]
 }
