@@ -14,7 +14,7 @@ import TextField from "@mui/material/TextField";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
-    padding: theme.spacing(2),
+    padding: theme.spacing(4),
   },
   "& .MuiDialogActions-root": {
     padding: theme.spacing(1),
@@ -83,10 +83,14 @@ export default function DictionaryDialog({
           id="customized-dialog-title"
           onClose={handleClose}
         >
-          Save word
+          {definition ? "Change word in dictionary" : "Add word to dictionary"}
         </BootstrapDialogTitle>
         <DialogContent dividers className="dialogContent">
-          <Typography gutterBottom>Add a definition for the word</Typography>
+          <Typography gutterBottom>
+            {definition
+              ? "Change the definition for the term"
+              : "Add a definition for the term"}
+          </Typography>
           <TextField
             onChange={(e) => setTerm(e.target.value)}
             autoFocus

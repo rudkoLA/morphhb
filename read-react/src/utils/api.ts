@@ -99,3 +99,9 @@ export const updateWord = (word: IWord) => {
 
   return req;
 };
+
+export const deleteWord = (word: IWord) => {
+  const req = deleteRequest(`${SERVER_URL_DEV}words/${word.id}`);
+
+  return req;
+};

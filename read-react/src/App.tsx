@@ -9,12 +9,15 @@ import {
   updateWord,
   fetchWord,
   fetchWordsByBooksAndChapters,
+  deleteWord,
 } from "./utils/api";
 
 import { TBookName, bookList, bookNamesMap, books } from "./utils/books";
 import { generateNumbers, later } from "./utils/common";
 import DictionaryDialog from "./components/Dialog";
 import Button from "@mui/material/Button";
+
+import WordsTableDialog from "./components/WordsTableDialog";
 
 function App() {
   const [startingBook, startingChapter, startingVerse] = window.location.hash
@@ -28,7 +31,7 @@ function App() {
   const [chapter, setChapter] = useState<number>(+startingChapter || 1);
   const [selectedWord, setSelectedWord] = useState<IWord | null>(null); // [book, chapter, verse, word
   const handleChapterChange = (chapter: number) => {
-    window.location.hash = `#${book}/${chapter}/0`;
+    window.location.hash = `#${book}/${chapter}/1`;
     // scroll to correct chapter
     const element = document.getElementById(`${book}-${chapter}-0`);
     if (element) {
@@ -115,10 +118,6 @@ function App() {
     }
   }, 2000);
 
-  const handleClose = () => {
-    setSelectedWord(null);
-  };
-
   const handleSubmit = async (word: IWord) => {
     const data = await fetchWord(word.id);
 
@@ -128,6 +127,24 @@ function App() {
       await createWord(word);
     }
     setSelectedWord(null);
+  };
+
+  const [isTableDialogOpen, setIsTableDialogOpen] = useState(false);
+
+  const handleEdit = (word: IWord) => {
+    setSelectedWord(word);
+  };
+
+  const handleDelete = (word: IWord) => {
+    const confirm = window.confirm(
+      `Are you sure you want to delete "${word.id}"?`
+    );
+
+    if (confirm) {
+      deleteWord(word).then(() => {
+        setWords(words.filter((w) => w.id !== word.id));
+      });
+    }
   };
 
   return (
@@ -160,7 +177,11 @@ function App() {
           </select>
         </div>
 
-        <Button variant="contained" className="wordsButton">
+        <Button
+          variant="contained"
+          className="wordsButton"
+          onClick={() => setIsTableDialogOpen(true)}
+        >
           Words: {words.length}
         </Button>
       </div>
@@ -212,11 +233,20 @@ function App() {
       {selectedWord && (
         <>
           <DictionaryDialog
-            handleClose={handleClose}
+            handleClose={() => setSelectedWord(null)}
             handleSubmit={handleSubmit}
             word={selectedWord}
           />
         </>
+      )}
+
+      {isTableDialogOpen && (
+        <WordsTableDialog
+          handleClose={() => setIsTableDialogOpen(false)}
+          handleEdit={handleEdit}
+          handleDelete={handleDelete}
+          words={words}
+        />
       )}
     </div>
   );
